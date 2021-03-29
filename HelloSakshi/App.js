@@ -38,7 +38,7 @@ class App extends Component {
        style={styles.button}
        onPress={this.onPress}
       >
-       <Text>Click me on this to increase counter</Text>
+       <Text>Click me on this to increase counter by 1</Text>
       </TouchableOpacity>
 
       <View>

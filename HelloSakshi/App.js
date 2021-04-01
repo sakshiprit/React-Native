@@ -6,65 +6,84 @@
  * @flow strict-local
  */
 import React, { Component } from 'react'
-import {
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-  View,
-} from 'react-native'
+import {StyleSheet,Text,View,Animated,} from 'react-native'
+import { API_KEY } from './APIKey';
+import WeatherView from './WeatherView'
+import Geolocation from '@react-native-community/geolocation';
 
 class App extends Component {
 
-
-  tetss = 1
-
   state = {
-    count: 0
+    isloading: false,
+    temperature: 0,
+    weatherdata: null,
+    error: null
   }
 
-  onPress = () => {
-    this.tetss = this.tetss + 1
-    console.log("print " + this.tetss)
-    this.setState({
-      count: this.state.count + 1
-    })
+  componentDidMount() {
+    console.log('Started component');
+
+    this.fetchDataFromServer(55.6761, 12.5683);
+
+    
+  /*  Geolocation.getCurrentPosition(
+      position => {
+        this.fetchDataFromServer(position.coords.latitude, position.coords.longitude);
+      },
+      error => {
+        this.setState({
+          error: 'Error Getting data'
+        });
+      }
+    );*/
   }
-  
+
+  fetchDataFromServer(lat, lon) {
+    fetch(
+      `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&APPID=${API_KEY}&units=metric`
+    )
+      .then(res => res.json())
+      .then(json => {
+         console.log(json);
+        this.setState({
+          temperature: json.main.temp,
+          weatherdata: json.weather[0].main,
+          isLoading: false
+        });
+      });
+  }
 
  render() {
-    return (
-      <View style={styles.container}>
-      <TouchableOpacity
-       style={styles.button}
-       onPress={this.onPress}
-      >
-       <Text>Click me on this to increase counter by 2</Text>
-      </TouchableOpacity>
-
-      <View>
-        <Text>
-          You clicked { this.tetss } times
-        </Text>
-      </View>
-    </View>
-    )
-  }
-
-
+      const { isLoading, weatherdata, temperature } = this.state;
+      return (
+        <View style={styles.container}>
+          {isLoading ? (
+            <View style={styles.loadingContainer}>
+              <Text style={styles.loadingText}>Fetching The Data from server</Text>
+            </View>
+          ) : (
+            <WeatherView weatherdata={weatherdata} temperature={temperature} />
+          )}
+        </View>
+      );
+    }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: '#fff'
   },
-  button: {
+  loadingContainer: {
+    flex: 1,
     alignItems: 'center',
-    backgroundColor: '#DDDDDD',
-    padding: 10,
-    marginBottom: 10
+    justifyContent: 'center',
+    backgroundColor: '#FFFDE4'
+  },
+  loadingText: {
+    fontSize: 30
   }
-})
+});
+
 
 export default App;

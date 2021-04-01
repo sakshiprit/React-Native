@@ -8,7 +8,7 @@
 import React, { Component } from 'react'
 import {StyleSheet,Text,View,Animated,} from 'react-native'
 import { API_KEY } from './APIKey';
-import WeatherView from './WeatherView'
+import WeatherView from './Components/WeatherView'
 import Geolocation from '@react-native-community/geolocation';
 
 class App extends Component {
@@ -24,8 +24,6 @@ class App extends Component {
     console.log('Started component');
 
     this.fetchDataFromServer(55.6761, 12.5683);
-
-    
   /*  Geolocation.getCurrentPosition(
       position => {
         this.fetchDataFromServer(position.coords.latitude, position.coords.longitude);
